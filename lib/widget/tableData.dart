@@ -7,14 +7,14 @@ import '../core/flowCore.dart';
 import '../core/baseCore.dart';
 import '../core/styleCore.dart';
 
-class ClsTable extends StatefulWidget {
-  final map;
+class NekoTable extends StatefulWidget {
+  final Map map;
   final String value;
   final int type;
   final Widget? header;
-  TableColumnWidth? headerColWidth;
+  final TableColumnWidth? headerColWidth;
 
-  ClsTable(
+  const NekoTable(
       {super.key,
       required this.map,
       required this.value,
@@ -23,16 +23,16 @@ class ClsTable extends StatefulWidget {
       this.header});
 
   @override
-  State<ClsTable> createState() => _ClsTableState();
+  State<NekoTable> createState() => _NekoTableState();
 }
 
-class _ClsTableState extends State<ClsTable> {
+class _NekoTableState extends State<NekoTable> {
   @override
   Widget build(BuildContext context) {
-    ClsTableChildren(map, value) {
-      var box = Hive.box("config");
-      var boxData = box.get("view");
-      var data = boxData["char"][value];
+    nekoTableChildren(map, value) {
+      Box box = Hive.box("config");
+      Map boxData = box.get("view");
+      List data = boxData["char"][value];
       List l = [];
       switch (widget.type) {
         case TableType.attr:
@@ -75,7 +75,7 @@ class _ClsTableState extends State<ClsTable> {
           break;
         default:
           for (var i in l) {
-            list.add(ClsTableRow(i));
+            list.add(NekoTableRow(i));
           }
       }
 
@@ -83,7 +83,7 @@ class _ClsTableState extends State<ClsTable> {
     }
 
     if (widget.header != null) {
-      return ClsCard(
+      return NekoCard(
           child: ClsCol(children: [
         Container(width: double.infinity, child: widget.header),
         Table(
@@ -94,23 +94,23 @@ class _ClsTableState extends State<ClsTable> {
                   : widget.headerColWidth!,
               1: FlexColumnWidth()
             },
-            children: ClsTableChildren(widget.map, widget.value))
+            children: nekoTableChildren(widget.map, widget.value))
       ]));
     } else {
-      return ClsCard(
+      return NekoCard(
           child: Table(
               defaultVerticalAlignment: TableCellVerticalAlignment.middle,
               columnWidths: <int, TableColumnWidth>{
                 0: widget.headerColWidth == null
-                    ? FixedColumnWidth(120)
+                    ? const FixedColumnWidth(120)
                     : widget.headerColWidth!,
-                1: FlexColumnWidth()
+                1: const FlexColumnWidth()
               },
-              children: ClsTableChildren(widget.map, widget.value)));
+              children: nekoTableChildren(widget.map, widget.value)));
     }
   }
 
-  ClsTableRow(List i) {
+  NekoTableRow(List i) {
     var name = i[0];
     List<Widget> list = [];
     i.removeAt(0);
@@ -130,20 +130,20 @@ class _ClsTableState extends State<ClsTable> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: Colors.teal.lightest.withOpacity(0.6),
-            border: new Border.all(color: Colors.white, width: 0.5),
+            border: Border.all(color: Colors.white, width: 0.5),
           ),
-          padding: EdgeInsets.only(left: 5, top: 10, bottom: 10, right: 5),
+          padding: const EdgeInsets.only(left: 5, top: 10, bottom: 10, right: 5),
           child: Text(name.toString(), style: ClsFontContentBold),
         )),
-        SizedBox(width: 10)
+        const SizedBox(width: 10)
       ]),
       Container(
         decoration: BoxDecoration(
-          border: new Border(
+          border: Border(
               bottom:
                   BorderSide(color: Colors.grey.withOpacity(0.4), width: 0.8)),
         ),
-        padding: EdgeInsets.only(left: 10, top: 10, bottom: 8, right: 10),
+        padding: const EdgeInsets.only(left: 10, top: 10, bottom: 8, right: 10),
         child: ClsRow(children: list),
       )
     ]);
@@ -171,9 +171,9 @@ class _ClsTableState extends State<ClsTable> {
         width: double.infinity,
         child: Text(i[0], textAlign: TextAlign.left, style: ClsFontContent)));
     list.add(ClsRow(children: [
-      ClsCard(child: Text(i[1], style: ClsFontContent)),
-      ClsCard(child: Text(i[2], style: ClsFontContent)),
-      Expanded(child: ClsCard(child: Text(i[3], style: ClsFontContent))),
+      NekoCard(child: Text(i[1], style: ClsFontContent)),
+      NekoCard(child: Text(i[2], style: ClsFontContent)),
+      Expanded(child: NekoCard(child: Text(i[3], style: ClsFontContent))),
     ]));
 
     return TableRow(children: [
@@ -204,11 +204,14 @@ class _ClsTableState extends State<ClsTable> {
 }
 
 ClsTitleTableRow(List title, List titleContent) {
-  return TableRow(children: [
-    ClsCard(
-        child: ClsCol(children: [
+  return TableRow(children: [ClsCol(children: [
       ClsRow(children: [
-        Expanded(child: SizedBox()),
+        Container(
+          padding: EdgeInsets.only(top: 5),
+            alignment: Alignment.bottomLeft,
+            child: Text(title[1],
+                textAlign: TextAlign.left, style: NekoText.topContent)),
+        const Expanded(child: SizedBox()),
         IconButton(
             icon: const Icon(FluentIcons.copy),
             onPressed: () {
@@ -217,20 +220,11 @@ ClsTitleTableRow(List title, List titleContent) {
             })
       ]),
       Container(
-          alignment: Alignment.centerLeft,
-          width: double.infinity,
-          padding: EdgeInsets.only(left: 10, bottom: 5),
-          child: Text(title[1],
-              textAlign: TextAlign.left, style: NekoText.nromalContent)),
-      Container(
           width: double.infinity,
           padding: EdgeInsets.all(5),
-          decoration: BoxDecoration(
-              border:
-                  Border.all(color: Colors.grey.withOpacity(0.2), width: 1)),
           child: SelectableText(titleContent[1],
               style: NekoText.nromalContent, textAlign: TextAlign.start))
-    ]))
+    ])
   ]);
 }
 
@@ -238,9 +232,12 @@ ClsAbilityTableRow(List i) {
   return TableRow(children: [
     Container(
         width: double.infinity,
-        padding: EdgeInsets.all(5),
+        padding: EdgeInsets.only(left: 5,top: 5,right: 5),
         child: ClsCol(children: [
           ClsRow(children: [
+        Container(
+        padding:EdgeInsets.only(top:5),
+            child:
             Container(
                 padding: EdgeInsets.all(5),
                 decoration: BoxDecoration(
@@ -258,7 +255,7 @@ ClsAbilityTableRow(List i) {
                     // 1.1更居中
                     forceStrutHeight: true, // 关键属性 强制改为文字高度
                   ),
-                )),
+                ))),
             Expanded(child: SizedBox()),
             IconButton(
                 icon: const Icon(FluentIcons.copy),
@@ -267,7 +264,7 @@ ClsAbilityTableRow(List i) {
                   Toast.show("结果已复制", gravity: Toast.bottom);
                 })
           ]),
-          SizedBox(height: 10),
+          SizedBox(height: 5),
           Container(
               width: double.infinity,
               padding: EdgeInsets.all(5),
@@ -283,10 +280,10 @@ ClsAbilityTableRow(List i) {
 }
 
 class ClsSource {
-  var data;
-  var map;
+  List data;
+  Map map;
 
-  ClsSource(this.data, this.map);
+  ClsSource(this.data,this.map);
 
   get attr {
     List list = [];

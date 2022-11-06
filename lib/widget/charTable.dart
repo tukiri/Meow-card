@@ -65,7 +65,7 @@ class _CharTableState extends State<CharTable> {
                   NekoExpander(
                       listkey: expanderKey[1],
                       header: ClsTextTitle(text: "人物简介"),
-                      content: ClsCard(
+                      content: NekoCard(
                           child: Container(
                               padding: EdgeInsets.only(
                                   left: 10, right: 5, top: 10, bottom: 10),
@@ -88,18 +88,18 @@ class _CharTableState extends State<CharTable> {
                               ])))),
                   NekoExpander(
                       listkey: expanderKey[2],
-                      header: ClsTextTitle(text: "称号"),
-                      content: ClsTable(
+                      header: const ClsTextTitle(text: "称号"),
+                      content: NekoTable(
                           map: snapshot.data,
                           value: "称号",
                           type: TableType.title)),
                   NekoExpander(
                       listkey: expanderKey[3],
-                      header: ClsTextTitle(text: "个人信息"),
-                      content: ClsTable(map: snapshot.data, value: "个人信息")),
+                      header: const ClsTextTitle(text: "个人信息"),
+                      content: NekoTable(map: snapshot.data, value: "个人信息")),
                   NekoExpander(
                       listkey: expanderKey[4],
-                      header: ClsTextTitle(text: "属性数据"),
+                      header: const ClsTextTitle(text: "属性数据"),
                       content:
                           OrientationBuilder(builder: (context, orientation) {
                         bool o = MediaQuery.of(context).size.width >
@@ -112,12 +112,12 @@ class _CharTableState extends State<CharTable> {
                           return ClsCol(children: [
                             ClsRow(children: [
                               FittedBox(
-                                  child: Container(
+                                  child: SizedBox(
                                       width: 250,
-                                      child: ClsTable(
+                                      child: NekoTable(
                                           map: snapshot.data,
                                           value: "属性数据(基本)"))),
-                              SizedBox(width: 20),
+                              const SizedBox(width: 20),
                               Expanded(
                                   child: Container(
                                       height: 400,
@@ -125,7 +125,7 @@ class _CharTableState extends State<CharTable> {
                             ]),
                             Container(
                                 height: 400,
-                                child: ClsTable(
+                                child: NekoTable(
                                     map: snapshot.data,
                                     value: "属性数据(属性)",
                                     type: TableType.attr))
@@ -134,13 +134,13 @@ class _CharTableState extends State<CharTable> {
                           return ClsCol(children: [
                             Container(
                                 width: double.infinity,
-                                child: ClsTable(
+                                child: NekoTable(
                                     map: snapshot.data, value: "属性数据(基本)")),
                             Container(
                                 height: 400,
                                 child: ClsDataAttrChart(snapshot.data)),
                             Container(
-                                child: ClsTable(
+                                child: NekoTable(
                                     map: snapshot.data,
                                     value: "属性数据(属性)",
                                     type: TableType.attr))
@@ -151,9 +151,8 @@ class _CharTableState extends State<CharTable> {
                       listkey: expanderKey[5],
                       header: ClsTextTitle(
                           text: snapshot.data["生活与学术侧技能栏"]["生活与学术侧技能栏"][1]),
-                      content: ClsTable(
+                      content: NekoTable(
                           headerColWidth: FlexColumnWidth(1),
-                          header: Text("结果点击可复制", style: ClsFontContent),
                           map: snapshot.data,
                           value: "生活与学术侧技能栏",
                           type: TableType.studyAbility)),
@@ -161,9 +160,8 @@ class _CharTableState extends State<CharTable> {
                       listkey: expanderKey[6],
                       header: ClsTextTitle(
                           text: snapshot.data["人物能力栏"]["人物能力栏"][1]),
-                      content: ClsTable(
+                      content: NekoTable(
                           headerColWidth: FlexColumnWidth(1),
-                          header: Text("结果点击可复制", style: ClsFontContent),
                           map: snapshot.data,
                           value: "人物能力栏",
                           type: TableType.ability)),
@@ -171,9 +169,8 @@ class _CharTableState extends State<CharTable> {
                       listkey: expanderKey[7],
                       header:
                           ClsTextTitle(text: snapshot.data["主要特质"]["主要特质"][1]),
-                      content: ClsTable(
+                      content: NekoTable(
                           headerColWidth: FlexColumnWidth(1),
-                          header: Text("结果点击可复制", style: ClsFontContent),
                           map: snapshot.data,
                           value: "主要特质",
                           type: TableType.ability)),
@@ -181,17 +178,15 @@ class _CharTableState extends State<CharTable> {
                       listkey: expanderKey[8],
                       header:
                           ClsTextTitle(text: snapshot.data["次要特质"]["次要特质"][1]),
-                      content: ClsTable(
+                      content: NekoTable(
                           headerColWidth: FlexColumnWidth(1),
-                          header: Text("结果点击可复制", style: ClsFontContent),
                           map: snapshot.data,
                           value: "次要特质",
                           type: TableType.ability)),
                   NekoExpander(
                       listkey: expanderKey[9],
                       header: ClsTextTitle(text: "公式判定"),
-                      content: ClsTable(
-                          header: Text("结果点击可复制", style: ClsFontContent),
+                      content: NekoTable(
                           map: snapshot.data,
                           value: "公式判定",
                           type: TableType.judge))

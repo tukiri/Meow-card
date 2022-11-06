@@ -5,14 +5,4 @@
         <item name="android:windowBackground">?android:colorBackground</item>
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
-
-    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar" tools:ignore="DuplicateDefinition">
-        <item name="android:windowBackground">?android:colorBackground</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
-    </style>
-
-    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar" tools:ignore="DuplicateDefinition">
-        <item name="android:windowBackground">?android:colorBackground</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
-    </style>
 </resources>

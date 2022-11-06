@@ -54,50 +54,34 @@ Future<String> FindImageById(List list, id) async {
   return url;
 }
 
-Future<String> initImg(index, type) async {
+Future<String> initImg(file) async {
+  String type = file["from"];
+  int index = file["index"];
   print("检测图片加载,当前类别:$type");
   var box = Hive.box("file");
   var data = [];
   String uri = "";
   if (type == "cloud") {
-    data = await box.get("recentList");
-    await{print("是否需要加载图片？:${data[index].containsKey("imgMap")}")};
+    List data = await box.get("recentList");
     if (!data[index].containsKey("imgMap")) {
       data[index]["imgMap"] =
           await loadImg(data[index]["bytes"], data[index]["name"]);
       data[index].remove("bytes");
       box.put("recentList", data);
     }
-    uri = await initCallImg(data[index], index, type);
-    await {print("图片路径为：$uri")};
+    uri = await FindImageById(data[index]["imgMap"]["基础信息"], 1);
     return uri;
   } else {
     data = box.get("list");
-    await{print("是否需要加载图片？:${data[index].containsKey("imgMap")}")};
     if (!data[index].containsKey("imgMap")) {
       data[index]["imgMap"] =
           await loadImg(data[index]["bytes"], data[index]["name"]);
       data[index].remove("bytes");
       box.put("list", data);
     }
-    uri = await initCallImg(data[index], index, type);
-    await {print("图片路径为：$uri")};
+    uri = await FindImageById(data[index]["imgMap"]["基础信息"], 1);
     return uri;
   }
-}
-
-Future<String> initCallImg(file, index, type) async {
-  var path = FindImageById(file["imgMap"]["基础信息"], 1);
-  if (path == null) {
-    return await initImg(index, type);
-  } else {
-    return await path;
-  }
-}
-
-Future<String> RecallImg(file) async {
-  var path = FindImageById(file["imgMap"]["基础信息"], 1);
-  return await path;
 }
 
 ///图片处理

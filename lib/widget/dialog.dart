@@ -43,17 +43,17 @@ showContentDialog(BuildContext context, String type) async {
   Future.delayed(const Duration(microseconds: 100), () async {
     switch (type) {
       case "config":
-        await LoadFileModel();
+        await loadFileModel();
         Navigator.pop(navKey.currentContext!);
         break;
       case "cloud":
-        await LoadConfig(type: "cloud");
+        await loadConfig(type: "cloud");
         break;
       case "cloud-open":
-        await LoadConfig(type: "cloud", open: true);
+        await loadConfig(type: "cloud", open: true);
         break;
       case "file":
-        await LoadConfig(type: "file");
+        await loadConfig(type: "file");
         break;
       default:
         break;

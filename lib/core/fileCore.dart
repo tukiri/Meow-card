@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
-import 'dart:ui';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
-import 'package:neko_cc/core/imageCore.dart';
 import 'package:path/path.dart';
 import 'package:hive/hive.dart';
 import '../core/excelCore.dart';
@@ -12,34 +10,25 @@ import '../core/mainCore.dart';
 import '../pages/mainTab.dart';
 import '../widget/dialog.dart';
 
+///初始化通信组件
 MethodChannel methodChannel = const MethodChannel('neko.method.channel');
 
-//重置配置
-Future LoadFileModel() async {
-  var config = Hive.box('config');
-  var jsonPath = config.get('jsonPath', defaultValue: "");
-  var i;
+///加载文件模型
+Future loadFileModel() async {
+  Box config = Hive.box('config');
+  String jsonPath = config.get('jsonPath');
+  List data = ["file","view","replace"];
 
-  i = File(jsonPath + "\\" + "file.json");
-  Map jsonFile = await i.exists()
-      ? jsonDecode(await i.readAsString())
-      : (jsonDecode(await rootBundle.loadString("assets/json/file.json")));
-
-  i = File(jsonPath + "\\" + "replace.json");
-  Map jsonReplace = await i.exists()
-      ? jsonDecode(await i.readAsString())
-      : (jsonDecode(await rootBundle.loadString("assets/json/replace.json")));
-
-  i = File(jsonPath + "\\" + "view.json");
-  Map jsonView = await i.exists()
-      ? jsonDecode(await i.readAsString())
-      : (jsonDecode(await rootBundle.loadString("assets/json/view.json")));
-
-  config.put("view", jsonView);
-  config.put("file", jsonFile);
-  config.put("replace", jsonReplace);
+  for(String i in data){
+    File file = File("$jsonPath\\$i.json");
+    Map map = await file.exists()
+        ? jsonDecode(await file.readAsString())
+        : (jsonDecode(await rootBundle.loadString("assets/json/$i.json")));
+    config.put(i, map);
+  }
 }
 
+///打开最近文件
 Future openRecentFile() async {
   var fileData = Hive.box("file");
   List fileList = await fileData.get("recentList");
@@ -48,34 +37,35 @@ Future openRecentFile() async {
   }
 }
 
-//获取文件夹内的xlsx文件，并添加到box的列表内
-Future LoadConfig({type, open = false}) async {
+///获取文件夹内的xlsx文件，并添加到box的列表内
+Future loadConfig({type, open = false}) async {
   var config = Hive.box('config');
   List warning = [];
 
   loadCloudRead(l, f) async {
     List putList = [];
-
-    for (var list in l) {
+    int index = 0;
+    for (List list in l) {
       String path = list[0];
-
-      String fileType = extension(path);
-      if ((fileType == ".xlsx")) {
-        String name = basename(path).replaceAll(fileType, "");
+      String type = extension(path);
+      if ((type == ".xlsx")) {
+        String name = basename(path).replaceAll(type, "");
         try {
-          Uint8List bytes;
-          bytes = list[1];
+          Uint8List bytes = list[1];
           Map excel = await methodChannel
               .invokeMethod('excel.read', {'name': name, 'bytes': bytes});
           var content = await nekoExcelRead(
               NekoExcel(excel), config.get("file"), config.get("replace"));
           putList.add({
             "name": name,
-            "type": fileType,
+            "type": type,
             "url": path,
             "content": content,
-            "bytes":bytes
+            "bytes":bytes,
+            "from":"cloud",
+            "index":index
           });
+          index++;
         } catch (e) {
           warning.add("加载名为[$name]的人物卡时遇到错误:\n${e.toString()}");
         }
@@ -86,15 +76,14 @@ Future LoadConfig({type, open = false}) async {
 
   loadFileRead(l, f) async {
     List putList = [];
-
+    int index = 0;
     await for (var file in l) {
       String path = file.path;
-
-      String fileType = extension(path);
-      if ((fileType == ".xlsx")) {
-        String name = basename(path).replaceAll(fileType, "");
-        print("读取[$name]文件");
-        // try {
+      String type = extension(path);
+      if ((type == ".xlsx")) {
+        String name = basename(path).replaceAll(type, "");
+        print("读取文件[$name]");
+        try {
           Uint8List bytes;
           File charFile = File(path);
           bytes = charFile.readAsBytesSync();
@@ -105,27 +94,32 @@ Future LoadConfig({type, open = false}) async {
               NekoExcel(excel), config.get("file"), config.get("replace"));
           putList.add({
             "name": name,
-            "type": fileType,
+            "type": type,
             "url": path,
             "content": content,
-            "bytes":bytes
+            "bytes":bytes,
+            "from":"file",
+            "index":index
           });
-        // } catch (e) {
-        //   warning.add("加载名为[$name]的人物卡时遇到错误:\n${e.toString()}");
-        // }
+        index++;
+        } catch (e) {
+          warning.add("加载名为[$name]的人物卡时遇到错误:\n${e.toString()}");
+        }
       }
     }
     return putList;
   }
 
   loadRead(l, t, f) async {
-    List putList =
-        t == "file" ? await loadFileRead(l, f) : await loadCloudRead(l, f);
-    var fileData = Hive.box("file");
-    if (t == "file") {
+    List putList = [];
+    if(t=="file"){
+      putList = await loadFileRead(l, f);
+      Box fileData = Hive.box("file");
       await fileData.put("list", putList);
       await fileKey.currentState?.refresh();
-    } else if (t == "cloud") {
+    }else{
+      putList = await loadCloudRead(l, f);
+      Box fileData = Hive.box("file");
       await fileData.put("recentList", putList);
       await cloudKey.currentState?.refresh();
     }
@@ -137,17 +131,11 @@ Future LoadConfig({type, open = false}) async {
       }
     }
 
-    if (f) {
-
-      if (open) {
-        if(navIndex!=0){
-          paneCounter.index = 0;
-        }
-        Future.delayed(Duration(seconds: 1), ()async{
+    if (f && open) {
+        Future.delayed(const Duration(seconds: 1), ()async{
           await openRecentFile();
         });
-        };
-    }
+        }
   }
 
   loadFile({t, f = false}) async {
@@ -179,11 +167,11 @@ Future LoadConfig({type, open = false}) async {
   }
 }
 
-//更新设置中的路径，传入参数是文本框内的控制器
-Future UpdatePath(a, b) async {
+///更新设置中的路径，传入参数是文本框内的控制器
+Future updatePath(a, b) async {
   var data = Hive.box('config');
-  var excelPath = await data.get('excelPath', defaultValue: null);
-  var jsonPath = await data.get('jsonPath', defaultValue: null);
-  a.text = await nekoEmpty(excelPath) ? "请填入参数！" : excelPath;
-  b.text = await nekoEmpty(jsonPath) ? "为空则使用默认参数" : jsonPath;
+  var excelPath = await data.get('excelPath');
+  var jsonPath = await data.get('jsonPath');
+  a.text = nekoEmpty(excelPath) ? "请填入参数！" : excelPath;
+  b.text = nekoEmpty(jsonPath) ? "为空则使用默认参数" : jsonPath;
 }

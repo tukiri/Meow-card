@@ -41,7 +41,7 @@ class _ConfigTabState extends State<ConfigTab> {
             String? path = await FilePicker.platform.getDirectoryPath();
             await data.put(value, path);
             //获取文件列表
-            await UpdatePath(excelPathController, jsonPathController);
+            await updatePath(excelPathController, jsonPathController);
             if(type =="json"){
               await showContentDialog(navKey.currentContext!, "config");
             }
@@ -53,7 +53,7 @@ class _ConfigTabState extends State<ConfigTab> {
 
   @override
   Widget build(BuildContext context) {
-    UpdatePath(excelPathController, jsonPathController);
+    updatePath(excelPathController, jsonPathController);
     ValueNotifier<int> index = ValueNotifier<int>(0);
 
     return ValueListenableBuilder<int>(
@@ -75,7 +75,7 @@ class _ConfigTabState extends State<ConfigTab> {
                               padding: EdgeInsets.all(20),
                               child: ClsCol(
                                   children: [
-                                    ClsCard(child:
+                                    NekoCard(child:
                                     ClsCol(
                                         children: [
                                           Text("开发人员选项", style: NekoText.topTitle),
@@ -87,7 +87,7 @@ class _ConfigTabState extends State<ConfigTab> {
                                                       style: ClsFontContent),
                                                   onPressed: () async {
                                                     await ResetAllBox();
-                                                    await UpdatePath(
+                                                    await updatePath(
                                                         excelPathController,
                                                         jsonPathController);
                                                     await showContentDialog(navKey.currentContext!, "config");
@@ -126,7 +126,7 @@ class _ConfigTabState extends State<ConfigTab> {
                                               ])
                                         ])),
                                     SizedBox(height: 10),
-                                    ClsCard(child: ClsCol(children: [
+                                    NekoCard(child: ClsCol(children: [
                                       Text("文件路径",style: NekoText.topTitle),
                                       ClsFolderSearch("excelPath",
                                           excelPathController,"file"),

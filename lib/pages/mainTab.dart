@@ -112,8 +112,9 @@ class _FileTabState extends State<FileTab> {
                 style: ButtonTranStyle,
                 onPressed: () {
                   if(selected.any((e) => e["url"]==file["url"])) {
-                    paneCounter.index = selected.indexWhere((e) => e["url"]==file["url"]) -selected.length +1 ;
-                  }else{SelectedAdd(file);
+                    paneCounter.index = 1+selected.indexWhere((e) => e["url"]==file["url"])  ;
+                  }else{
+                    SelectedAdd(file);
                 }},
                 child: Container(
                     decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -128,13 +129,14 @@ class _FileTabState extends State<FileTab> {
                         child: IntrinsicHeight(
                             child: ClsRow(children: [
                               FutureBuilder(
-                                  future: initImg(index,type),
+                                  future: initImg(file),
                                   builder: (context, snapshot) {
                                     switch (snapshot.connectionState) {
                                       case ConnectionState.done:
                                         return Image.file(
                                           File(snapshot.data.toString()),
                                           fit: BoxFit.fitWidth,
+                                          alignment: Alignment.topCenter,
                                           width: 150,
                                           height: 150,
                                         );

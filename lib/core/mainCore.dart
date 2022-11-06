@@ -26,11 +26,8 @@ SelectedRemove(file) {
     selected.remove(selected.firstWhere((e) => e["url"]==file["url"]));
   }
   selected ??= [];
-  if(navIndex ==0){
-    paneCounter.index = 0;
-  }else{
-    paneCounter.refresh();
-  }
+  navLength = selected.length;
+  paneCounter.index = navLength;
 
 }
 
@@ -39,12 +36,14 @@ SelectedAdd(file) {
   if (!selected.any((e) => e["url"]==file["url"])) {
     selected.add(file);
   }
-  selected ??= [];
-  paneCounter.refresh();
+  navLength = selected.length;
+  paneCounter.index = navLength;
 }
 
 SelectedClear() {
   selected.clear();
+  navLength = selected.length;
+  paneCounter.index = navLength;
   paneCounter.refresh();
 }
 
@@ -143,7 +142,7 @@ class ClsNavState extends State<ClsNav> {
         onWillPop: () async{
       if(navIndex!=0){
 
-          paneCounter.index=-items.length +1;
+          paneCounter.index=0;
         return false;
       }else{
         return true;
@@ -226,8 +225,7 @@ class ClsNavState extends State<ClsNav> {
       if (mounted) {
         setState(() {
           items = [...head, ...ResetPane(selected)];
-          navLength = items.length;
-          navIndex = navLength - 1 + paneCounter.index;
+          navIndex = paneCounter.index;
         });
       }
     });
