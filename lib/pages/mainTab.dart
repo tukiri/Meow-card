@@ -5,15 +5,15 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:neko_cc/widget/overlay.dart';
 import '../Widget/dialog.dart';
-import '../core/flowCore.dart';
-import '../core/imageCore.dart';
-import '../core/mainCore.dart';
-import '../core/styleCore.dart';
+import '../widget/flow.dart';
+import '../part.dart';
 
-GlobalKey<_FileTabState> cloudKey = GlobalKey();
-GlobalKey<_FileTabState> fileKey = GlobalKey();
-ValueNotifier<int> FileTabindex = ValueNotifier<int>(0);
+
+
+ValueNotifier<int> fileTabindex = ValueNotifier<int>(0);
 bool haveRefreshButton =false;
+
+
 
 class MainTab extends StatefulWidget {
   const MainTab({super.key});
@@ -30,20 +30,20 @@ class _MainTabState extends State<MainTab> {
       PaneItem(
           icon: const Icon(FluentIcons.cloud_weather),
           title: const Text("最近"),
-          body: FileTab(key:cloudKey,type: "cloud")),
+          body: FileTab(key:nekoKey.cloud,type: "cloud")),
       PaneItem(
           icon: const Icon(FluentIcons.fabric_folder),
           title: const Text("本地"),
-          body: FileTab(key:fileKey,type: "file")),
+          body: FileTab(key:nekoKey.file,type: "file")),
     ];
 
     return ValueListenableBuilder<int>(
       builder: (content, value, child) => NavigationView(
           pane: NavigationPane(
             header: menuButton,
-              selected: FileTabindex.value,
+              selected: fileTabindex.value,
               onChanged: (i) {
-                FileTabindex.value = i;
+                fileTabindex.value = i;
               },
               displayMode: PaneDisplayMode.top,
               items: list,
@@ -51,10 +51,10 @@ class _MainTabState extends State<MainTab> {
             PaneItemHeader(header: IconButton(
                 icon: const Icon(FluentIcons.refresh, size: 16),
                 onPressed: () async{
-                  await showContentDialog(navKey.currentContext!, FileTabindex.value==0?"cloud":"file");
+                  await showContentDialog(nekoKey.nav.currentContext!, fileTabindex.value==0?"cloud":"file");
                 }))
           ])),
-      valueListenable: FileTabindex,
+      valueListenable: fileTabindex,
     );
   }
 }
@@ -62,17 +62,14 @@ class _MainTabState extends State<MainTab> {
 
 
 class FileTab extends StatefulWidget {
-  FileTab({super.key,required this.type});
+  const FileTab({super.key,required this.type});
   final String type;
 
   @override
-  State<FileTab> createState() => _FileTabState();
+  State<FileTab> createState() => FileTabState();
 }
 
-class _FileTabState extends State<FileTab> {
-   refresh(){
-     setState(() {});
-   }
+class FileTabState extends State<FileTab> {
 
   @override
   Widget build(BuildContext context) {
@@ -106,15 +103,14 @@ class _FileTabState extends State<FileTab> {
         itemCount: data.length,
         itemBuilder: (context, index) {
           final file = data[index];
-          final type = widget.type;
           card(file, index) {
             return Button(
-                style: ButtonTranStyle,
+                style: tranStyle,
                 onPressed: () {
-                  if(selected.any((e) => e["url"]==file["url"])) {
-                    paneCounter.index = 1+selected.indexWhere((e) => e["url"]==file["url"])  ;
+                  if(select.list.any((e) => e["url"]==file["url"])) {
+                    paneCounter.index = 1+select.list.indexWhere((e) => e["url"]==file["url"])  ;
                   }else{
-                    SelectedAdd(file);
+                    select.add(file);
                 }},
                 child: Container(
                     decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -127,7 +123,7 @@ class _FileTabState extends State<FileTab> {
                     child: Card(
                         padding: const EdgeInsets.all(0),
                         child: IntrinsicHeight(
-                            child: ClsRow(children: [
+                            child: NekoRow(children: [
                               FutureBuilder(
                                   future: initImg(file),
                                   builder: (context, snapshot) {
@@ -147,7 +143,7 @@ class _FileTabState extends State<FileTab> {
                                   }),
                               const SizedBox(width: 10),
                               Expanded(
-                                  child: ClsCol(children: [
+                                  child: NekoCol(children: [
                                     Container(
                                         padding: const EdgeInsets.only(
                                             bottom: 5),
@@ -174,4 +170,9 @@ class _FileTabState extends State<FileTab> {
 //主界面
     return listView;
   }
+
+  refresh() {
+    setState(() {});
+  }
+
 }

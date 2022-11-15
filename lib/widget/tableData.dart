@@ -3,9 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:neko_cc/widget/toast.dart';
 
-import '../core/flowCore.dart';
-import '../core/baseCore.dart';
-import '../core/styleCore.dart';
+import 'flow.dart';
+import '../part.dart';
+
+
 
 class NekoTable extends StatefulWidget {
   final Map map;
@@ -36,19 +37,19 @@ class _NekoTableState extends State<NekoTable> {
       List l = [];
       switch (widget.type) {
         case TableType.attr:
-          l = ClsSource(data, map).attr;
+          l = nekoSource(data, map).attr;
           break;
         case TableType.judge:
-          l = ClsSource(data, map).judge;
+          l = nekoSource(data, map).judge;
           break;
         case TableType.studyAbility:
-          l = ClsSource(data, map).studyAbility;
+          l = nekoSource(data, map).studyAbility;
           break;
         case TableType.ability:
-          l = ClsSource(data, map).ability;
+          l = nekoSource(data, map).ability;
           break;
         case TableType.title:
-          l = ClsSource(data, map).title;
+          l = nekoSource(data, map).title;
           break;
         default:
           for (var a in data) {
@@ -60,18 +61,18 @@ class _NekoTableState extends State<NekoTable> {
         case TableType.judge:
           l.removeAt(0);
           for (var i in l) {
-            list.add(ClsJudgeTableRow(i));
+            list.add(nekoJudgeTableRow(i));
           }
           break;
         case TableType.studyAbility:
         case TableType.ability:
           l.removeAt(0);
           for (var i in l) {
-            list.add(ClsAbilityTableRow(i));
+            list.add(nekoAbilityTableRow(i));
           }
           break;
         case TableType.title:
-          list.add(ClsTitleTableRow(l[0], l[1]));
+          list.add(nekoTitleTableRow(l[0], l[1]));
           break;
         default:
           for (var i in l) {
@@ -84,7 +85,7 @@ class _NekoTableState extends State<NekoTable> {
 
     if (widget.header != null) {
       return NekoCard(
-          child: ClsCol(children: [
+          child: NekoCol(children: [
         Container(width: double.infinity, child: widget.header),
         Table(
             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -119,12 +120,12 @@ class _NekoTableState extends State<NekoTable> {
       list.add(Expanded(
           child: Container(
         padding: EdgeInsets.only(right: 5),
-        child: Text(a.toString(), style: ClsFontContent),
+        child: Text(a.toString(), style: nekoFontContent),
       )));
     }
 
     return TableRow(children: [
-      ClsRow(children: [
+      NekoRow(children: [
         Expanded(
             child: Container(
           alignment: Alignment.center,
@@ -133,7 +134,7 @@ class _NekoTableState extends State<NekoTable> {
             border: Border.all(color: Colors.white, width: 0.5),
           ),
           padding: const EdgeInsets.only(left: 5, top: 10, bottom: 10, right: 5),
-          child: Text(name.toString(), style: ClsFontContentBold),
+          child: Text(name.toString(), style: nekoFontContentBold),
         )),
         const SizedBox(width: 10)
       ]),
@@ -144,12 +145,12 @@ class _NekoTableState extends State<NekoTable> {
                   BorderSide(color: Colors.grey.withOpacity(0.4), width: 0.8)),
         ),
         padding: const EdgeInsets.only(left: 10, top: 10, bottom: 8, right: 10),
-        child: ClsRow(children: list),
+        child: NekoRow(children: list),
       )
     ]);
   }
 
-  ClsJudgeTableRow(List i) {
+  nekoJudgeTableRow(List i) {
     ButtonStyle button = ButtonStyle(
         elevation: ButtonState.all(0),
         shadowColor: ButtonState.all(Colors.transparent),
@@ -169,15 +170,15 @@ class _NekoTableState extends State<NekoTable> {
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(bottom: 5),
         width: double.infinity,
-        child: Text(i[0], textAlign: TextAlign.left, style: ClsFontContent)));
-    list.add(ClsRow(children: [
-      NekoCard(child: Text(i[1], style: ClsFontContent)),
-      NekoCard(child: Text(i[2], style: ClsFontContent)),
-      Expanded(child: NekoCard(child: Text(i[3], style: ClsFontContent))),
+        child: Text(i[0], textAlign: TextAlign.left, style: nekoFontContent)));
+    list.add(NekoRow(children: [
+      NekoCard(child: Text(i[1], style: nekoFontContent)),
+      NekoCard(child: Text(i[2], style: nekoFontContent)),
+      Expanded(child: NekoCard(child: Text(i[3], style: nekoFontContent))),
     ]));
 
     return TableRow(children: [
-      ClsRow(children: [
+      NekoRow(children: [
         Expanded(
             child: Container(
           alignment: Alignment.center,
@@ -186,7 +187,7 @@ class _NekoTableState extends State<NekoTable> {
             border: new Border.all(color: Colors.white, width: 0.5),
           ),
           padding: EdgeInsets.only(left: 5, top: 10, bottom: 10, right: 5),
-          child: Text(name.toString(), style: ClsFontContentBold),
+          child: Text(name.toString(), style: nekoFontContentBold),
         )),
         SizedBox(width: 10)
       ]),
@@ -198,14 +199,14 @@ class _NekoTableState extends State<NekoTable> {
                 Toast.show("结果已复制", gravity: Toast.bottom);
               },
               style: button,
-              child: ClsCol(children: list)))
+              child: NekoCol(children: list)))
     ]);
   }
 }
 
-ClsTitleTableRow(List title, List titleContent) {
-  return TableRow(children: [ClsCol(children: [
-      ClsRow(children: [
+nekoTitleTableRow(List title, List titleContent) {
+  return TableRow(children: [NekoCol(children: [
+      NekoRow(children: [
         Container(
           padding: EdgeInsets.only(top: 5),
             alignment: Alignment.bottomLeft,
@@ -228,13 +229,13 @@ ClsTitleTableRow(List title, List titleContent) {
   ]);
 }
 
-ClsAbilityTableRow(List i) {
+nekoAbilityTableRow(List i) {
   return TableRow(children: [
     Container(
         width: double.infinity,
         padding: EdgeInsets.only(left: 5,top: 5,right: 5),
-        child: ClsCol(children: [
-          ClsRow(children: [
+        child: NekoCol(children: [
+          NekoRow(children: [
         Container(
         padding:EdgeInsets.only(top:5),
             child:
@@ -279,11 +280,11 @@ ClsAbilityTableRow(List i) {
   ]);
 }
 
-class ClsSource {
+class  nekoSource {
   List data;
   Map map;
 
-  ClsSource(this.data,this.map);
+  nekoSource(this.data,this.map);
 
   get attr {
     List list = [];

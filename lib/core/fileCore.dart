@@ -1,14 +1,5 @@
-import 'dart:io';
-import 'dart:convert';
-import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/services.dart';
-import 'package:path/path.dart';
-import 'package:hive/hive.dart';
-import '../core/excelCore.dart';
-import '../core/baseCore.dart';
-import '../core/mainCore.dart';
-import '../pages/mainTab.dart';
-import '../widget/dialog.dart';
+part of neko;
+
 
 ///初始化通信组件
 MethodChannel methodChannel = const MethodChannel('neko.method.channel');
@@ -33,7 +24,7 @@ Future openRecentFile() async {
   var fileData = Hive.box("file");
   List fileList = await fileData.get("recentList");
   if (fileList.isNotEmpty) {
-    await SelectedAdd(fileList[0]);
+    await select.add(fileList[0]);
   }
 }
 
@@ -116,18 +107,18 @@ Future loadConfig({type, open = false}) async {
       putList = await loadFileRead(l, f);
       Box fileData = Hive.box("file");
       await fileData.put("list", putList);
-      await fileKey.currentState?.refresh();
+      await nekoKey.file.currentState?.refresh();
     }else{
       putList = await loadCloudRead(l, f);
       Box fileData = Hive.box("file");
       await fileData.put("recentList", putList);
-      await cloudKey.currentState?.refresh();
+      await nekoKey.cloud.currentState?.refresh();
     }
 
-    Navigator.pop(navKey.currentContext!);
+    Navigator.pop(nekoKey.nav.currentContext!);
     if (warning.isNotEmpty) {
       for (String i in warning) {
-        showWarningDialog(navKey.currentContext!, i);
+        showWarningDialog(nekoKey.nav.currentContext!, i);
       }
     }
 

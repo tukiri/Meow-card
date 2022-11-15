@@ -1,13 +1,13 @@
-import 'package:hive/hive.dart';
+part of neko;
 
-var boxList = ["config", "file"];
 
-Future PrintBox(name) async {
+///打印单个数据库
+Future printBox(name) async {
   var box = Hive.box(name);
   var outStr = "\n——————[${box.name}]——————";
-  if (!box.isEmpty) {
+  if (box.isNotEmpty) {
     for (var i in box.keys) {
-      outStr += "\n[${i}]:${box.get(i)}";
+      outStr += "\n[$i]:${box.get(i)}";
     }
   } else {
     outStr += "\n不存在内容";
@@ -17,29 +17,31 @@ Future PrintBox(name) async {
   print(outStr);
 }
 
-Future ResetBox(name) async {
+///重置单个数据库
+Future resetBox(name) async {
   await Hive.deleteBoxFromDisk(name);
   await Hive.openBox(name);
 }
 
-Future ResetAllBox() async {
+///重置所有数据库
+Future resetAllBox() async {
   await Hive.deleteFromDisk();
   for (var name in boxList) {
     await Hive.openBox(name);
   }
-  ;
-  await InitFile();
-  await InitConfig();
+  await initFile();
+  await initConfig();
 }
 
-Future InitBox() async {
+///初始化数据库
+Future initBox() async {
   for (var name in boxList) {
     await Hive.openBox(name);
   }
-  ;
 }
 
-Future InitConfig() async {
+///初始化数据库-设置
+Future initConfig() async {
   var box = Hive.box("config");
   box.put('excelPath', "");
   box.put('recentPath', []);
@@ -49,15 +51,16 @@ Future InitConfig() async {
   box.put("replace", {});
 }
 
-Future InitFile() async {
+///初始化数据库-文件
+Future initFile() async {
   var box = Hive.box("file");
   box.put('list', []);
   box.put('recentList', []);
 }
 
-Future PrintAllBox() async {
+///打印所有数据库
+Future printAllBox() async {
   for (var name in boxList) {
-    await {PrintBox(name)};
+    printBox(name);
   }
-  ;
 }

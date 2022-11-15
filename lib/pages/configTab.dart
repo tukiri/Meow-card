@@ -3,16 +3,12 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:neko_cc/widget/overlay.dart';
-import 'package:path_provider/path_provider.dart' as pathProvider;
 
 import 'package:hive/hive.dart';
-import '../core/flowCore.dart';
-import '../core/dataCore.dart';
-import '../core/fileCore.dart';
+import 'package:path_provider/path_provider.dart';
+import '../widget/flow.dart';
 import '../Widget/dialog.dart';
-import '../core/mainCore.dart';
-import '../core/styleCore.dart';
-import 'mainTab.dart';
+import '../part.dart';
 
 class ConfigTab extends StatefulWidget {
   const ConfigTab({super.key});
@@ -25,16 +21,16 @@ class _ConfigTabState extends State<ConfigTab> {
   TextEditingController jsonPathController = TextEditingController();
   TextEditingController excelPathController = TextEditingController();
 
-  ClsFolderSearch(value, controller,String type) {
+  nekoFolderSearch(value, controller,String type) {
     return
-      Container(padding:EdgeInsets.only(top: 10,bottom: 10),child:
-      ClsRow(
+      Container(padding:const EdgeInsets.only(top: 10,bottom: 10),child:
+      NekoRow(
       children: [
         Expanded(child:
         TextBox(controller:controller)),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         Button(
-          child: Text('浏览'),
+          child: const Text('浏览'),
           onPressed: () async {
             //选择文件夹
             var data = Hive.box('config');
@@ -43,7 +39,7 @@ class _ConfigTabState extends State<ConfigTab> {
             //获取文件列表
             await updatePath(excelPathController, jsonPathController);
             if(type =="json"){
-              await showContentDialog(navKey.currentContext!, "config");
+              await showContentDialog(nekoKey.nav.currentContext!, "config");
             }
           },
         )
@@ -72,34 +68,33 @@ class _ConfigTabState extends State<ConfigTab> {
                           icon: const Icon(FluentIcons.settings),
                           title: const Text("设置"),
                           body: Container(
-                              padding: EdgeInsets.all(20),
-                              child: ClsCol(
+                              padding: const EdgeInsets.all(20),
+                              child: NekoCol(
                                   children: [
                                     NekoCard(child:
-                                    ClsCol(
+                                    NekoCol(
                                         children: [
                                           Text("开发人员选项", style: NekoText.topTitle),
-                                          SizedBox(height: 10),
-                                          ClsRow(
+                                          const SizedBox(height: 10),
+                                          NekoRow(
                                               children: [
                                                 Button(
                                                   child: Text('重置数据库',
-                                                      style: ClsFontContent),
+                                                      style: nekoFontContent),
                                                   onPressed: () async {
-                                                    await ResetAllBox();
+                                                    await resetAllBox();
                                                     await updatePath(
                                                         excelPathController,
                                                         jsonPathController);
-                                                    await showContentDialog(navKey.currentContext!, "config");
+                                                    await showContentDialog(nekoKey.nav.currentContext!, "config");
                                                   },
                                                 ),
-                                                SizedBox(width: 10),
+                                                const SizedBox(width: 10),
                                                 Button(
                                                     child: Text('清空缓存',
-                                                        style: ClsFontContent),
+                                                        style: nekoFontContent),
                                                     onPressed: () async {
-                                                      Directory directory = await pathProvider
-                                                          .getApplicationDocumentsDirectory();
+                                                      Directory directory = await getApplicationDocumentsDirectory();
                                                       Directory dir = Directory(
                                                           "${directory
                                                               .path}\\喵卡\\图片\\");
@@ -109,29 +104,29 @@ class _ConfigTabState extends State<ConfigTab> {
                                                           recursive: true);
                                                     })
                                               ]),
-                                          SizedBox(height: 10),
-                                          ClsRow(
+                                          const SizedBox(height: 10),
+                                          NekoRow(
                                               children: [
                                                 Button(
                                                     child: Text('清空最近列表',
-                                                        style: ClsFontContent),
+                                                        style: nekoFontContent),
                                                     onPressed: () async {
                                                       var fileData = Hive.box("file");
                                                       await fileData.put("recentList", []);
                                                       var data = Hive.box("config");
                                                       await data.put("recentPath",[]);
-                                                      await SelectedClear();
-                                                      await cloudKey.currentState?.refresh();
+                                                      await select.clear();
+                                                      await nekoKey.cloud.currentState?.refresh();
                                                     })
                                               ])
                                         ])),
-                                    SizedBox(height: 10),
-                                    NekoCard(child: ClsCol(children: [
+                                    const SizedBox(height: 10),
+                                    NekoCard(child: NekoCol(children: [
                                       Text("文件路径",style: NekoText.topTitle),
-                                      ClsFolderSearch("excelPath",
+                                      nekoFolderSearch("excelPath",
                                           excelPathController,"file"),
                                       Text("模板路径",style: NekoText.topTitle),
-                                      ClsFolderSearch("jsonPath",
+                                      nekoFolderSearch("jsonPath",
                                           jsonPathController,"json")
                                     ]))
                                   ])))

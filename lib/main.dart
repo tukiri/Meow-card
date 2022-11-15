@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../core/mainCore.dart';
+import '../part.dart';
 
 void main() async {
-  runApp(const ClsMain());
+  runApp(const NekoMain());
 }

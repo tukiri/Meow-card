@@ -1,68 +1,64 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/services.dart';
-import 'package:neko_cc/core/flowCore.dart';
-import 'package:path_provider/path_provider.dart' as pathProvider;
-import 'package:hive_flutter/hive_flutter.dart';
-import '../Widget/dialog.dart';
-import '../pages/configTab.dart';
-import '../pages/charTab.dart';
-import '../pages/mainTab.dart';
-import '../core/styleCore.dart';
-import 'package:permission_handler/permission_handler.dart';
-import '../widget/toast.dart';
-import 'dataCore.dart';
+part of neko;
 
-List selected = [];
 
+///显示在左侧菜单的数据储存参数
+SelModel select = SelModel();
+
+///用于刷新主页面的控制器
 Counter paneCounter = Counter();
 const platform = EventChannel('neko.event.channel');
-GlobalKey<NavigationViewState> navKey = GlobalKey();
 
-SelectedRemove(file) {
-  print("index:$navIndex,length:${selected.length}");
-  if (selected.any((e) => e["url"]==file["url"])) {
-    selected.remove(selected.firstWhere((e) => e["url"]==file["url"]));
+///用于储存列表的元素数据库
+class SelModel{
+  List _sel = [];
+
+  List get list {return _sel;}
+  
+  remove(file) {
+    if (_sel.any((e) => e["url"]==file["url"])) {
+      _sel.remove(_sel.firstWhere((e) => e["url"]==file["url"]));
+    }
+    _sel;
+    navLength = _sel.length;
+    paneCounter.index = navLength;
+
   }
-  selected ??= [];
-  navLength = selected.length;
-  paneCounter.index = navLength;
 
-}
-
-SelectedAdd(file) {
-  selected ??= [];
-  if (!selected.any((e) => e["url"]==file["url"])) {
-    selected.add(file);
+  add(file) {
+    _sel;
+    if (!_sel.any((e) => e["url"]==file["url"])) {
+      _sel.add(file);
+    }
+    navLength = _sel.length;
+    paneCounter.index = navLength;
   }
-  navLength = selected.length;
-  paneCounter.index = navLength;
+
+  clear() {
+    _sel.clear();
+    navLength = _sel.length;
+    paneCounter.index = navLength;
+    paneCounter.refresh();
+  }
 }
 
-SelectedClear() {
-  selected.clear();
-  navLength = selected.length;
-  paneCounter.index = navLength;
-  paneCounter.refresh();
-}
 
-InitBaseCore(context) async {
-  Directory directory = await pathProvider.getApplicationDocumentsDirectory();
+
+initMain(context) async {
+  Directory directory = await getApplicationDocumentsDirectory();
   Directory dir = Directory("${directory.path}\\喵卡\\数据库\\");
   await dir.create(recursive: true);
   await Hive.initFlutter(dir.path);
-  await InitBox();
+  await initBox();
 }
 
-class ClsMain extends StatefulWidget {
-  const ClsMain({super.key});
+class  NekoMain extends StatefulWidget {
+  const NekoMain({super.key});
 
   @override
-  State<ClsMain> createState() => ClsMainState();
+  State<NekoMain> createState() => NekoMainState();
 }
 
-class ClsMainState extends State<ClsMain> {
+class  NekoMainState extends State<NekoMain> {
   @override
   Widget build(BuildContext context) {
     return FluentApp(
@@ -71,7 +67,7 @@ class ClsMainState extends State<ClsMain> {
         home:
         Container(decoration: BoxDecoration(color: Colors.grey[20]),child:
         FutureBuilder(
-                    future: InitBaseCore(context),
+                    future: initMain(context),
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.none:
@@ -82,7 +78,7 @@ class ClsMainState extends State<ClsMain> {
                           if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
-                            return ClsNav();
+                            return const NekoNav();
                           }
                       }
                     })));
@@ -101,28 +97,28 @@ class ClsMainState extends State<ClsMain> {
   }
 }
 
-class ClsNav extends StatefulWidget {
-  const ClsNav({super.key});
+class  NekoNav extends StatefulWidget {
+  const NekoNav({super.key});
 
   @override
-  State<ClsNav> createState() => ClsNavState();
+  State<NekoNav> createState() => NekoNavState();
 }
 
 int navIndex = 0;
 int navLength = 0;
 
-class ClsNavState extends State<ClsNav> {
-  List<NavigationPaneItem> ResetPane(i) {
+class  NekoNavState extends State<NekoNav> {
+  List<NavigationPaneItem> resetPane(i) {
     List<NavigationPaneItem> list = [];
     for (var file in i) {
       String name = file["name"].toString();
       list.add(PaneItem(
-          icon: Icon(FluentIcons.contact),
+          icon: const Icon(FluentIcons.contact),
           title: Text(name),
           trailing: IconButton(
-              icon: Icon(FluentIcons.cancel),
+              icon: const Icon(FluentIcons.cancel),
               onPressed: () {
-                SelectedRemove(file);
+                select.remove(file);
               }),
           body: CharTab(file: file)));
     }
@@ -130,7 +126,7 @@ class ClsNavState extends State<ClsNav> {
   }
 
   List<NavigationPaneItem> head = [
-    PaneItem(icon: Icon(FluentIcons.home), title: Text("主页"), body: MainTab())
+    PaneItem(icon: const Icon(FluentIcons.home), title: const Text("主页"), body: const MainTab())
   ];
   late List<NavigationPaneItem> items = head;
   late List<NavigationPaneItem> footItems = [];
@@ -149,27 +145,27 @@ class ClsNavState extends State<ClsNav> {
       }
         }, child:
       NavigationView(
-        key: navKey,
-        appBar: NavigationAppBar(height: 0,automaticallyImplyLeading:false),
+        key: nekoKey.nav,
+        appBar: const NavigationAppBar(height: 0,automaticallyImplyLeading:false),
         pane: NavigationPane(
             header: Container(
                 alignment: Alignment.topCenter,
-                padding: EdgeInsets.all(5),
-                child: ClsRow(children: [
+                padding: const EdgeInsets.all(5),
+                child: NekoRow(children: [
                   Container(
-                      padding: EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(5),
                       child: IconButton(
-                          icon: Icon(FluentIcons.back, size: 16),
+                          icon: const Icon(FluentIcons.back, size: 16),
                           onPressed: () {
-                            navKey.currentState?.minimalPaneOpen = false;
+                            nekoKey.nav.currentState?.minimalPaneOpen = false;
                           })),
                   Expanded(
                       child: Container(
                           alignment: Alignment.centerLeft,
-                          padding: EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(5),
                           child: Text("Neko喵卡☆",
                               textAlign: TextAlign.left,
-                              style: ClsFontContent)))
+                              style: nekoFontContent)))
                 ])),
             selected: navIndex,
             onChanged: (i) {
@@ -180,9 +176,9 @@ class ClsNavState extends State<ClsNav> {
             footerItems: [
               PaneItemSeparator(),
               PaneItem(
-                  icon: Icon(FluentIcons.settings),
-                  title: Text("设置"),
-                  body: ConfigTab())
+                  icon: const Icon(FluentIcons.settings),
+                  title: const Text("设置"),
+                  body: const ConfigTab())
             ])));
   }
 
@@ -197,7 +193,7 @@ class ClsNavState extends State<ClsNav> {
         list.removeRange(7, list.length);
       }
       data.put("recentPath", list);
-      await showContentDialog(navKey.currentContext!, "cloud-open");
+      await showContentDialog(nekoKey.nav.currentContext!, "cloud-open");
       print("futter端处理完毕");
       setState(() {});
 
@@ -207,7 +203,7 @@ class ClsNavState extends State<ClsNav> {
   void getNekoSharedUri(context) async {
     if (Platform.isAndroid) {
       print("检测为安卓设备");
-      Map<Permission, PermissionStatus> statuses = await [
+      await [
         Permission.storage,
         Permission.accessMediaLocation,
         Permission.manageExternalStorage
@@ -224,7 +220,7 @@ class ClsNavState extends State<ClsNav> {
     paneCounter.addListener(() {
       if (mounted) {
         setState(() {
-          items = [...head, ...ResetPane(selected)];
+          items = [...head, ...resetPane(select.list)];
           navIndex = paneCounter.index;
         });
       }

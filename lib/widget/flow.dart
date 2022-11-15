@@ -1,11 +1,10 @@
-
 import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
-import '../core/styleCore.dart';
-import 'imageCore.dart';
 
-class ClsCol extends Column {
-  ClsCol({
+import '../part.dart';
+
+class NekoCol extends Column {
+  NekoCol({
     super.key,
     super.mainAxisAlignment,
     super.mainAxisSize,
@@ -20,8 +19,8 @@ class ClsCol extends Column {
   CrossAxisAlignment get crossAxisAlignment => CrossAxisAlignment.start;
 }
 
-class ClsRow extends Row {
-  ClsRow({
+class NekoRow extends Row {
+  NekoRow({
     super.key,
     super.mainAxisAlignment,
     super.mainAxisSize,
@@ -69,8 +68,8 @@ class _NekoCardState extends State<NekoCard> {
   }
 }
 
-class ClsCharImg extends StatefulWidget {
-  const ClsCharImg({
+class  nekoCharImg extends StatefulWidget {
+  const nekoCharImg({
     super.key,
     required this.file,
   });
@@ -79,14 +78,14 @@ class ClsCharImg extends StatefulWidget {
 
 
   @override
-  State<ClsCharImg> createState() => _ClsCharImgState();
+  State<nekoCharImg> createState() => _nekoCharImgState();
 }
 
-class _ClsCharImgState extends State<ClsCharImg> {
+class _nekoCharImgState extends State<nekoCharImg> {
   @override
   Widget build(BuildContext context) {
-    return ClsCol(children: [
-      ClsRow(mainAxisAlignment: MainAxisAlignment.center, children: [
+    return NekoCol(children: [
+      NekoRow(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(
             alignment: Alignment.topCenter,
             decoration: BoxDecoration(
@@ -126,8 +125,8 @@ class _ClsCharImgState extends State<ClsCharImg> {
   }
 }
 
-class ClsTextTitle extends StatefulWidget {
-  const ClsTextTitle({
+class  nekoTextTitle extends StatefulWidget {
+  const nekoTextTitle({
     super.key,
     this.text,
   });
@@ -135,13 +134,13 @@ class ClsTextTitle extends StatefulWidget {
   final String? text;
 
   @override
-  State<ClsTextTitle> createState() => _ClsTextTitleState();
+  State<nekoTextTitle> createState() => _nekoTextTitleState();
 }
 
-class _ClsTextTitleState extends State<ClsTextTitle> {
+class _nekoTextTitleState extends State<nekoTextTitle> {
   @override
   Widget build(BuildContext context) {
-    return ClsRow(children: [
+    return NekoRow(children: [
       Container(
           padding: const EdgeInsets.only(top: 5, bottom: 5, right: 5),
           child: Container(

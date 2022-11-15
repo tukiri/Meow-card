@@ -1,12 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart';
-import 'package:image/image.dart';
-import 'package:hive/hive.dart';
-import 'package:archive/archive.dart';
-import 'package:xml/xml.dart';
-import 'excelCore.dart';
+part of neko;
 
 Future<String> get _localPath async {
   final directory = await getApplicationDocumentsDirectory();
@@ -43,7 +35,7 @@ Future<Map> loadImg(List<int> bytes, String name) async {
   return map;
 }
 
-Future<String> FindImageById(List list, id) async {
+Future<String> findImageById(List list, id) async {
   var url = "";
   for (var i in list) {
     var name = "rId$id";
@@ -69,7 +61,7 @@ Future<String> initImg(file) async {
       data[index].remove("bytes");
       box.put("recentList", data);
     }
-    uri = await FindImageById(data[index]["imgMap"]["基础信息"], 1);
+    uri = await findImageById(data[index]["imgMap"]["基础信息"], 1);
     return uri;
   } else {
     data = box.get("list");
@@ -79,7 +71,7 @@ Future<String> initImg(file) async {
       data[index].remove("bytes");
       box.put("list", data);
     }
-    uri = await FindImageById(data[index]["imgMap"]["基础信息"], 1);
+    uri = await findImageById(data[index]["imgMap"]["基础信息"], 1);
     return uri;
   }
 }

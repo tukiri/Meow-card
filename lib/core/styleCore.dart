@@ -1,12 +1,12 @@
-import 'package:fluent_ui/fluent_ui.dart';
+part of neko;
 
 
-TextStyle ClsFontContentBold = const TextStyle(
+TextStyle nekoFontContentBold = const TextStyle(
     fontFamily: "思源黑体",
     fontSize: 12,
     fontWeight: FontWeight.bold,
     letterSpacing: 2);
-TextStyle ClsFontContent =
+TextStyle nekoFontContent =
     const TextStyle(fontFamily: "思源黑体", fontSize: 12, letterSpacing: 2);
 
 
@@ -17,7 +17,7 @@ TextStyle button =
 TextStyle brief =
     const TextStyle(fontFamily: '思源黑体', fontSize: 16.0, letterSpacing: 1);
 
-ButtonStyle ButtonTranStyle = ButtonStyle(
+ButtonStyle tranStyle = ButtonStyle(
     elevation: ButtonState.all(0),
     shadowColor: ButtonState.all(Colors.transparent),
     foregroundColor: ButtonState.resolveWith((states) {
@@ -29,7 +29,7 @@ ButtonStyle ButtonTranStyle = ButtonStyle(
     shape: ButtonState.all(const RoundedRectangleBorder(side: BorderSide.none)),
     padding: ButtonState.all(const EdgeInsets.all(0)));
 
-ButtonStyle ButtonFloatStyle = ButtonStyle(
+ButtonStyle floatStyle = ButtonStyle(
     padding: ButtonState.all(const EdgeInsets.only(bottom: 5)),
     //圆角
     shape: ButtonState.all(
@@ -41,7 +41,7 @@ ButtonStyle ButtonFloatStyle = ButtonStyle(
     //背景
     backgroundColor: ButtonState.all(Colors.white));
 
-ButtonStyle ButtonTranStyle1 = ButtonStyle(
+ButtonStyle tranStyle1 = ButtonStyle(
     elevation: ButtonState.all(0),
     shadowColor: ButtonState.all(Colors.transparent),
     border: ButtonState.all(BorderSide.none),
@@ -49,8 +49,8 @@ ButtonStyle ButtonTranStyle1 = ButtonStyle(
       return Colors.black;
     }),
     backgroundColor: ButtonState.all(Colors.transparent),
-    shape: ButtonState.all(RoundedRectangleBorder(side: BorderSide.none)),
-    padding: ButtonState.all(EdgeInsets.all(0)));
+    shape: ButtonState.all(const RoundedRectangleBorder(side: BorderSide.none)),
+    padding: ButtonState.all(const EdgeInsets.all(0)));
 
 class NekoText {
   static TextStyle nromalContent = const TextStyle(

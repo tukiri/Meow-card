@@ -1,14 +1,15 @@
-class TableType {
-  static const normal = 0;
-  static const attr = 1;
-  static const judge = 2;
-  static const judgeName = 3;
-  static const ability = 4;
-  static const title = 5;
-  static const studyAbility = 6;
-  static const equips = 7;
-}
+part of neko;
 
+///app首次打开参数
+bool appStart = false;
+
+///所有页面的key检索类
+NekoKey nekoKey = NekoKey();
+
+///数据库列表
+List boxList = ["config", "file"];
+
+///判断单元格是否为空的函数
 bool nekoEmpty(i) {
   return ((i == null) | (i == "null")) ? true : (i.isEmpty ? true : false);
 }

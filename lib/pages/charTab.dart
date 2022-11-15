@@ -1,26 +1,23 @@
-import 'dart:io';
-
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:neko_cc/core/flowCore.dart';
-import '../core/mainCore.dart';
-import '../core/styleCore.dart';
+import 'package:neko_cc/widget/flow.dart';
 import '../widget/charTable.dart';
 import '../widget/overlay.dart';
+import '../part.dart';
 
 class CharTab extends StatefulWidget {
   final Map? file;
 
-  const CharTab({this.file});
+  const CharTab({super.key, this.file});
 
   @override
-  State<CharTab> createState() => _CharTabState(file);
+  State<CharTab> createState() => _CharTabState();
 }
 
 class _CharTabState extends State<CharTab> {
   Map? file;
   ValueNotifier<int> index = ValueNotifier<int>(0);
 
-  _CharTabState(this.file);
+  _CharTabState();
 
   @override
   Widget build(BuildContext context) {
@@ -41,14 +38,14 @@ class _CharTabState extends State<CharTab> {
               )
         ],
             footerItems: [
-              PaneItemHeader(header: ClsRow(children: [
-                IconButton(icon: Icon(FluentIcons.chevron_left), onPressed:(){
-                  for (var i in expanderKey) {
+              PaneItemHeader(header: NekoRow(children: [
+                IconButton(icon: const Icon(FluentIcons.chevron_left), onPressed:(){
+                  for (var i in nekoKey.exp.list) {
                     if (i.currentState != null) {
                       i.currentState.updateOpen(false);
                     }}}),
-                IconButton(icon: Icon(FluentIcons.chevron_right), onPressed:(){
-                  for (var i in expanderKey) {
+                IconButton(icon: const Icon(FluentIcons.chevron_right), onPressed:(){
+                  for (var i in nekoKey.exp.list) {
                     if (i.currentState != null) {
                       i.currentState.updateOpen(true);
                     }}}),

@@ -48,6 +48,8 @@ dependencies:
   xml: ^5.4.1
   scoped_model: ^2.0.0
   permission_handler: ^9.2.0
+  dio: ^4.0.6
+  package_info_plus: ^3.0.2
 
 dev_dependencies:
   flutter_test:

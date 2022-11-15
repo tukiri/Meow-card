@@ -1,10 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:path/path.dart';
+part of neko;
 
-import '../core/imageCore.dart';
-import '../core/baseCore.dart';
 
+///储存xlsx文件映射Map的Excel父类
 class NekoExcel {
   Map excel;
 
@@ -20,6 +17,7 @@ class NekoExcel {
   }
 }
 
+///储存工作表的Excel子类
 class NekoSheet {
   final List _sheet;
   final String _name;
@@ -149,7 +147,6 @@ nekoRepalce(l, r) async {
 
 Future nekoSheetRead(NekoSheet sheet, Map textData, Map textReplace) async {
   var list = {};
-  var v;
   void replace(list, i, j) async {
     if (!nekoEmpty(textReplace)) {
       var replace = textReplace.containsKey(i) ? textReplace[i] : null;
@@ -161,7 +158,7 @@ Future nekoSheetRead(NekoSheet sheet, Map textData, Map textReplace) async {
   }
 
   for (String i in textData.keys.toList()) {
-    v = textData[i];
+    var v = textData[i];
 
     if (v is List) {
       list[i] = await sheet.read(v, TableType.normal);
